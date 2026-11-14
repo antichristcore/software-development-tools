@@ -1,0 +1,26 @@
+name: Daily commit
+
+on:
+  schedule:
+    - cron: "17 6 * * *"   # каждый день в 09:17 по Москве
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  commit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Create next numbered file
+        run: |
+          last=$(ls | grep -E '^[0-9]+$' | sort -n | tail -1)
+          next=$(( ${last:-0} + 1 ))
+          echo "$next" > "$next"
+          git config user.name "axm"
+          git config user.email "124406261+antichristcore@users.noreply.github.com"
+          git add "$next"
+          git commit -m "Create $next"
+          git push
